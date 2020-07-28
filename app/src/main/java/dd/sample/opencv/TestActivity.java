@@ -3,14 +3,15 @@ package dd.sample.opencv;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.SurfaceTexture;
+import android.os.Build;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Size;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.google.mediapipe.formats.proto.LandmarkProto.NormalizedLandmark;
 import com.google.mediapipe.formats.proto.LandmarkProto.NormalizedLandmarkList;
 import com.google.mediapipe.components.CameraHelper;
@@ -21,6 +22,7 @@ import com.google.mediapipe.components.PermissionHelper;
 import com.google.mediapipe.framework.AndroidAssetUtil;
 import com.google.mediapipe.framework.PacketGetter;
 import com.google.mediapipe.glutil.EglManager;
+
 import java.util.List;
 
 public class TestActivity extends AppCompatActivity {
@@ -38,8 +40,10 @@ public class TestActivity extends AppCompatActivity {
     private static final boolean FLIP_FRAMES_VERTICALLY = true;
     static {
         // Load all native libraries needed by the app.
-//        System.loadLibrary("mediapipe_jni");
+        System.loadLibrary("mediapipe_jni");
+        //as mediapipe internally uses opencv
         System.loadLibrary("opencv_java3");
+//        OpenCVLoader.initDebug();
     }
     // {@link SurfaceTexture} where the camera-preview frames can be accessed.
     private SurfaceTexture previewFrameTexture;
@@ -87,7 +91,21 @@ public class TestActivity extends AppCompatActivity {
                                     + getMultiHandLandmarksDebugString(multiHandLandmarks));
                 });
         PermissionHelper.checkAndRequestCameraPermissions(this);
+
+//        Toast.makeText(this,getAbi(),Toast.LENGTH_LONG).show();
     }
+
+    public String getAbi() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            // on newer Android versions, we'll return only the most important Abi version
+            return Build.SUPPORTED_ABIS[0];
+        }
+        else {
+            // on pre-Lollip versions, we got only one Abi
+            return Build.CPU_ABI;
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();

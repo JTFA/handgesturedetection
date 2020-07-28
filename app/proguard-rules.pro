@@ -19,3 +19,8 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+#All classes in the com.example package
+#-keep class com.google.mediapipe.components.CameraXPreviewHelper { *; }
+#-keep class androidx.camera.core.* { *; }
+#-keep class androidx.core.app.* { *; }
